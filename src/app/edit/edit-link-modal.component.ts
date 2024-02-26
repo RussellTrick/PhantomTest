@@ -26,6 +26,7 @@ import {
             id="newLink"
             name="newLink"
             formControlName="newLink"
+            placeholder="{{ link }}"
             required
           />
           <button type="submit">Submit</button>
