@@ -3,20 +3,28 @@
 <button (click)="openSubmitLinkModal()">Submit a Link</button>
 <button (click)="clearLocalStorage()">Clear Local Storage</button>
 
-<app-submit-link-modal
-  *ngIf="isModalOpen"
-  (closeModal)="closeSubmitLinkModal()"
-></app-submit-link-modal>
+<div>
+  @if(isModalOpen){
+  <app-submit-link-modal
+    (closeModal)="closeSubmitLinkModal()"
+    (newLinkSubmitted)="handleNewLink($event)"
+  />
+  }
+</div>
 
-<div *ngFor="let link of pagedLinks">
+<div>
+  @for (link of pagedLinks; track link){
   {{ link }}
+  }
 </div>
 <div>
   <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-  <span *ngFor="let pageNum of pageNumbers">
+  <span>
+    @for(pageNum of pageNumbers; track pageNum){
     <button (click)="changePage(pageNum)">{{ pageNum }}</button>
+    }
   </span>
-  <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+  <button (click)="nextPage()" [disabled]="currentPage >= totalPages">
     Next
   </button>
 </div>
