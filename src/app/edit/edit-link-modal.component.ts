@@ -8,11 +8,12 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-submit-link-modal',
+  selector: 'app-edit-link-modal',
   standalone: true,
   template: `
     <div>
-      <h2>Submit Link</h2>
+      <button (click)="close()">&times;</button>
+      <h2>Edit Link {{ link }}</h2>
       <form [formGroup]="linkForm" (ngSubmit)="submitLink()">
         <label for="newLink">Enter a new link:</label>
         <input
@@ -20,7 +21,6 @@ import {
           id="newLink"
           name="newLink"
           formControlName="newLink"
-          placeholder="Enter a new link here"
           required
         />
         <button type="submit">Submit</button>
@@ -40,14 +40,17 @@ import {
       </form>
     </div>
   `,
-  styleUrls: ['./submit-link-modal.component.scss'],
+  styleUrls: ['./edit-link-modal.component.scss'],
   imports: [ReactiveFormsModule],
 })
-export class SubmitLinkModalComponent {
+export class EditLinkModalComponent {
   @Output() closeModal: EventEmitter<void> = new EventEmitter<void>();
+  // newLink prop pass event
   @Output() newLinkSubmitted: EventEmitter<string> = new EventEmitter<string>();
+  @Output() update: EventEmitter<void> = new EventEmitter<void>();
   newLink?: string;
   linkForm!: FormGroup;
+  link: string | null = null;
 
   constructor(private fb: FormBuilder) {
     this.linkForm = this.fb.group({
@@ -58,6 +61,8 @@ export class SubmitLinkModalComponent {
         ),
       ]),
     });
+
+    this.link = localStorage.getItem('editLink');
   }
 
   formatURL(input: String) {
@@ -93,9 +98,14 @@ export class SubmitLinkModalComponent {
       return;
     }
 
-    this.newLinkSubmitted.emit(newLink);
+    // If the link doesn't exist, add it to the array and update local storage
+    const updatedLinks = storedLinks.map((link) =>
+      link === this.link ? newLink : link
+    );
+    localStorage.setItem('links', JSON.stringify(updatedLinks));
 
     this.close();
+    this.update.emit();
   }
 
   close(): void {

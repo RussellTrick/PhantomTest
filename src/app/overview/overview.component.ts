@@ -2,28 +2,54 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubmitLinkModalComponent } from '../submit/submit-link-modal.component';
 import { Router } from '@angular/router';
+import { EditLinkModalComponent } from '../edit/edit-link-modal.component';
 
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [SubmitLinkModalComponent, CommonModule],
+  imports: [SubmitLinkModalComponent, EditLinkModalComponent, CommonModule],
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.scss'],
 })
 export class OverviewComponent {
   title = 'Angular Demo';
-  isModalOpen: boolean = false;
+  isSubmitModalOpen: boolean = false;
+  isEditModalOpen: boolean = false;
   currentPage: number = 1;
   pageSize: number = 20;
   links: string[] = [];
 
   constructor(private router: Router) {
+    this.update();
+  }
+
+  update() {
     const storedLinks = localStorage.getItem('links');
+    console.log('called update');
     if (storedLinks) {
       this.links = JSON.parse(storedLinks);
     } else {
       this.links = [];
     }
+  }
+
+  editLink(link: string) {
+    localStorage.setItem('editLink', link);
+    this.openEditLinkModal();
+  }
+
+  deleteLink(targetLink: string): void {
+    const storedLinks = JSON.parse(
+      localStorage.getItem('links') || '[]'
+    ) as string[];
+
+    const index = storedLinks.indexOf(targetLink);
+
+    if (index !== -1) {
+      storedLinks.splice(index, 1);
+      localStorage.setItem('links', JSON.stringify(storedLinks));
+    }
+    this.update();
   }
 
   handleNewLink(newLink: string): void {
@@ -42,12 +68,20 @@ export class OverviewComponent {
     }
   }
 
+  openEditLinkModal(): void {
+    this.isEditModalOpen = true;
+  }
+
+  closeEditLinkModal(): void {
+    this.isEditModalOpen = false;
+  }
+
   openSubmitLinkModal(): void {
-    this.isModalOpen = true;
+    this.isSubmitModalOpen = true;
   }
 
   closeSubmitLinkModal(): void {
-    this.isModalOpen = false;
+    this.isSubmitModalOpen = false;
   }
 
   get pagedLinks(): string[] {
