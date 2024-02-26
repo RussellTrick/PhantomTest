@@ -13,9 +13,11 @@
 </div>
 
 <div>
-  @for (link of pagedLinks; track link){
-  {{ link }}
-  }
+  <ul>
+    @for (link of pagedLinks; track link){
+    <li>{{ link }}</li>
+    }
+  </ul>
 </div>
 <div>
   <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>

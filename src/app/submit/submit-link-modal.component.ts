@@ -30,7 +30,12 @@ import {
         <div>Link is required.</div>
         } @if(linkForm.controls['newLink'].errors?.['pattern'] &&
         linkForm.controls['newLink'].touched){
-        <div>Invalid URL. Please enter a valid URL.</div>
+        <div>
+          Invalid URL. Accepted domains: .com|.org|.net|.edu|.gov|.co.uk
+        </div>
+        } @if(linkForm.controls['newLink'].errors?.['duplicateUrl'] &&
+        linkForm.controls['newLink'].touched){
+        <div>This URL already exists</div>
         }
       </form>
     </div>
@@ -51,19 +56,58 @@ export class SubmitLinkModalComponent {
       newLink: new FormControl('', [
         Validators.required,
         Validators.pattern(
-          /^(https:\/\/)?(www\.)?[a-z0-9.-]+\.(com|org|net|edu|gov|co\.uk)(\/.*)?$/
+          /^(www\.)?[a-z0-9.-]+\.(com|org|net|edu|gov|co\.uk)(\/.*)?$/i
         ),
       ]),
     });
+
+    // Subscribe to valueChanges to clear duplicateUrl error when value changes
+    this.linkForm.controls['newLink'].valueChanges.subscribe(() => {
+      if (this.linkForm.controls['newLink'].hasError('duplicateUrl')) {
+        this.linkForm.controls['newLink'].setErrors(null);
+      }
+    });
+  }
+
+  formatURL(input: String) {
+    // Check if the input starts with "http://" or "https://"
+    if (input.toLowerCase().startsWith('http://')) {
+      // Remove "http://" and prepend "https://www."
+      return 'https://www.' + input.substring(7).toLowerCase();
+    } else if (input.toLowerCase().startsWith('https://')) {
+      // Remove "https://" and prepend "https://www."
+      return 'https://www.' + input.substring(8).toLowerCase();
+    } else if (input.toLowerCase().startsWith('www.')) {
+      // Prepend "https://"
+      return 'https://' + input.toLowerCase();
+    } else {
+      // Input is not in the desired format, prepend "https://www."
+      return 'https://www.' + input.toLowerCase();
+    }
   }
 
   submitLink(): void {
     if (this.linkForm.invalid) {
       return;
     }
-    // TODO: Handle the submitted link (e.g., validate, save, etc.)
-    this.newLinkSubmitted.emit(this.linkForm.controls['newLink'].value);
-    console.log('Link submitted:', this.linkForm.value);
+
+    const newLink = this.formatURL(this.linkForm.controls['newLink'].value);
+
+    const storedLinks = JSON.parse(
+      localStorage.getItem('links') || '[]'
+    ) as string[];
+
+    if (storedLinks.includes(newLink)) {
+      this.linkForm.controls['newLink'].setErrors({ duplicateUrl: true });
+      return;
+    }
+
+    // If the link doesn't exist, add it to the array and update local storage
+    storedLinks.push(newLink);
+    localStorage.setItem('links', JSON.stringify(storedLinks));
+
+    this.newLinkSubmitted.emit(newLink);
+
     this.close();
   }
 

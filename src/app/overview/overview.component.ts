@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubmitLinkModalComponent } from '../submit/submit-link-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-overview',
@@ -13,10 +14,10 @@ export class OverviewComponent {
   title = 'Angular Demo';
   isModalOpen: boolean = false;
   currentPage: number = 1;
-  pageSize: number = 10;
+  pageSize: number = 20;
   links: string[] = [];
 
-  constructor() {
+  constructor(private router: Router) {
     const storedLinks = localStorage.getItem('links');
     if (storedLinks) {
       this.links = JSON.parse(storedLinks);
@@ -28,6 +29,7 @@ export class OverviewComponent {
   handleNewLink(newLink: string): void {
     this.links.push(newLink);
     localStorage.setItem('links', JSON.stringify(this.links));
+    this.router.navigate(['/success'], { state: { data: newLink } });
   }
 
   clearLocalStorage(): void {
