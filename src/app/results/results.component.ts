@@ -5,10 +5,12 @@ import { Router, RouterModule } from '@angular/router';
   selector: 'app-success',
   standalone: true,
   template: `
-    <div>
-      <h2>Thanks for the submission!</h2>
-      <p>You successfully created {{ newLink }}</p>
-      <a routerLink="/">Back</a>
+    <div class="results-container">
+      <div class="results-wrapper">
+        <h2>Thanks for the submission!</h2>
+        <p>You successfully created {{ newLink }}</p>
+        <a routerLink="/">Back to overview</a>
+      </div>
     </div>
   `,
   styleUrls: ['./results.component.scss'],

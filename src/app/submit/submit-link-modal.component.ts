@@ -11,33 +11,40 @@ import {
   selector: 'app-submit-link-modal',
   standalone: true,
   template: `
-    <div>
-      <h2>Submit Link</h2>
-      <form [formGroup]="linkForm" (ngSubmit)="submitLink()">
-        <label for="newLink">Enter a new link:</label>
-        <input
-          type="text"
-          id="newLink"
-          name="newLink"
-          formControlName="newLink"
-          placeholder="Enter a new link here"
-          required
-        />
-        <button type="submit">Submit</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <button class="close-button" (click)="close()">&times;</button>
+        <h2>Submit Link</h2>
+        <form
+          class="submit-form"
+          [formGroup]="linkForm"
+          (ngSubmit)="submitLink()"
+        >
+          <label for="newLink">Enter a new link:</label>
+          <input
+            type="text"
+            id="newLink"
+            name="newLink"
+            formControlName="newLink"
+            placeholder="Enter a new link here"
+            required
+          />
+          <button type="submit">Submit</button>
+        </form>
         <!-- Error messages -->
         @if(linkForm.controls['newLink'].errors?.['required'] &&
         linkForm.controls['newLink'].touched){
-        <div>Link is required.</div>
+        <div class="error">Link is required.</div>
         } @if(linkForm.controls['newLink'].errors?.['pattern'] &&
         linkForm.controls['newLink'].touched){
-        <div>
+        <div class="error">
           Invalid URL. Accepted domains: .com|.org|.net|.edu|.gov|.co.uk
         </div>
         } @if(linkForm.controls['newLink'].errors?.['duplicateUrl'] &&
         linkForm.controls['newLink'].touched){
-        <div>This URL already exists</div>
+        <div class="error">This URL already exists</div>
         }
-      </form>
+      </div>
     </div>
   `,
   styleUrls: ['./submit-link-modal.component.scss'],

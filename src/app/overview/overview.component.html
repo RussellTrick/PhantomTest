@@ -1,45 +1,54 @@
-<h2>Overview Page</h2>
+<main class="main">
+  <div class="overview-container">
+    <h2>Overview Page</h2>
 
-<button (click)="openSubmitLinkModal()">Submit a Link</button>
-<button (click)="clearLocalStorage()">Clear Local Storage</button>
+    <button (click)="openSubmitLinkModal()">Submit a Link</button>
+    <button (click)="clearLocalStorage()">Clear Local Storage</button>
 
-<div>
-  @if(isSubmitModalOpen){
-  <app-submit-link-modal
-    (closeModal)="closeSubmitLinkModal()"
-    (newLinkSubmitted)="handleNewLink($event)"
-  />
-  }
-</div>
+    <div>
+      @if(isSubmitModalOpen){
+      <app-submit-link-modal
+        (closeModal)="closeSubmitLinkModal()"
+        (newLinkSubmitted)="handleNewLink($event)"
+      />
+      }
+    </div>
 
-<div>
-  @if(isEditModalOpen){
-  <app-edit-link-modal
-    (closeModal)="closeEditLinkModal()"
-    (newLinkSubmitted)="handleNewLink($event)"
-    (update)="update()"
-  />
-  }
-</div>
+    <div>
+      @if(isEditModalOpen){
+      <app-edit-link-modal
+        (closeModal)="closeEditLinkModal()"
+        (newLinkSubmitted)="handleNewLink($event)"
+        (update)="update()"
+      />
+      }
+    </div>
 
-<div>
-  <ul>
-    @for (link of pagedLinks; track link){
-    <li>
-      {{ link }} <button (click)="editLink(link)">EDIT</button>
-      <button (click)="deleteLink(link)">DEL</button>
-    </li>
-    }
-  </ul>
-</div>
-<div>
-  <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
-  <span>
-    @for(pageNum of pageNumbers; track pageNum){
-    <button (click)="changePage(pageNum)">{{ pageNum }}</button>
-    }
-  </span>
-  <button (click)="nextPage()" [disabled]="currentPage >= totalPages">
-    Next
-  </button>
-</div>
+    <div class="link-container">
+      <ul>
+        @for (link of pagedLinks; track link){
+        <li class="custom-links">
+          {{ link }}
+          <aside>
+            <button (click)="editLink(link)">EDIT</button>
+            <button (click)="deleteLink(link)">DEL</button>
+          </aside>
+        </li>
+        }
+      </ul>
+    </div>
+    <div>
+      <button (click)="prevPage()" [disabled]="currentPage === 1">
+        Previous
+      </button>
+      <span>
+        @for(pageNum of pageNumbers; track pageNum){
+        <button (click)="changePage(pageNum)">{{ pageNum }}</button>
+        }
+      </span>
+      <button (click)="nextPage()" [disabled]="currentPage >= totalPages">
+        Next
+      </button>
+    </div>
+  </div>
+</main>
